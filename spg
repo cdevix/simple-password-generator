@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+
+# Simple Password Generator
+# License: MIT
+# Author: CDevix (https://github.com/cdevix)
+# Version: 1.0
+
+
+import random
+import sys
+
+
+class SimplePasswordGenerator:
+    def __init__(self, arguments):
+        # Program info
+        self.PROGRAM_NAME = "Simple Password Generator"
+        self.PROGRAM_VERSION = "1.0"
+        self.PROGRAM_DEVELOPER = "CDevix"
+
+        # Symbols definition
+        self.symbols = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p",
+                        "[", "]", "{", "}", "/", "|", "a", "s", "d", "f",
+                        "g", "h", "j", "k", "l", ":", "z", "x", "c", "v",
+                        "b", "n", "m", ".", "/", "?", "1", "2", "3", "4",
+                        "5", "6", "7", "8", "9", "0", "!", "@", "#", "$",
+                        "%", "*", "(", ")", "_", "-", "=", "+"]
+
+        # Copying arguments
+        self.arguments = arguments
+
+    def main(self):
+        # "Verbose things"
+        if self.arguments["mode"] == "verbose":
+            print("{name} v{version} by {developer}".format(
+                name=self.PROGRAM_NAME,
+                version=self.PROGRAM_VERSION,
+                developer=self.PROGRAM_DEVELOPER))
+
+            print("Length: {len}".format(
+                len=self.arguments["length"]))
+            print("Variations: {variations}".format(
+                variations=self.arguments["variations"]))
+            print("Result(s):")
+
+        for _ in range(self.arguments["variations"]):
+            print(self.generate())
+
+    def generate(self):
+        output_password = ""
+
+        for _ in range(self.arguments["length"]):
+            output_password += random.choice(self.symbols)
+
+        return output_password
+
+def parse_arguments(argv):
+    # Default options
+    output = {
+        "mode": "standard",
+        "length": 8,
+        "variations": 1
+    }
+
+    # Checking argv length
+    if len(argv) > 1:
+        # Mode
+        if "-v" in argv or "--verbose" in argv:
+            output["mode"] = "verbose"
+
+    if len(sys.argv) > 2:
+        # Length and variations
+        argument_index = 0
+
+        try:
+            for argument in argv:
+                if argument == "-l" or argument == "--length":
+                    output["length"] = int(argv[argument_index + 1])
+                elif argument == "--variations":
+                    output["variations"] = int(argv[argument_index + 1])
+
+                argument_index += 1
+        except IndexError:
+            print("Error parsing arguments.")
+
+    return output
+
+
+if __name__ == "__main__":
+    spg_args = parse_arguments(sys.argv)
+    spg = SimplePasswordGenerator(spg_args)
+    spg.main()
